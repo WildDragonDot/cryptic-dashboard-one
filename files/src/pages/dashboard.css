@@ -1,0 +1,30 @@
+@media screen and (max-width:1560px) and (min-width:1144px) {
+    .setStylecardContainer{
+        flex-wrap: wrap !important;
+    }
+    .setStylecard{
+        width: 100% !important;
+    }
+  }
+
+.chart {
+  min-width: 50%;
+  min-height: 50%;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .chart {
+    min-width: 90%;
+    min-height: 90%;
+  }
+
+  .grid{
+    display: flex;
+    flex-direction: column;
+  }
+}
+    
