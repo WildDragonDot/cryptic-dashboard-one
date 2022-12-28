@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Web3Storage } from "web3.storage";
 import swal from "@sweetalert/with-react";
+import getVideoId from "get-video-id";
 import "./Uploader.css";
 
 // Construct with token and endpoint
@@ -26,14 +27,13 @@ const projectSecret = process.env.REACT_APP_IPFS_SECRET_KEY;
 const auth =
   "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
 
-const client = create({
-  host: "ipfs.infura.io",
-  port: 5001,
-  protocol: "https",
+const options = {
+  method: "GET",
   headers: {
-    authorization: auth,
+    "X-RapidAPI-Key": "53946fd371mshf425708a1a54e91p1222cejsne4f12169650b",
+    "X-RapidAPI-Host": "yt-api.p.rapidapi.com",
   },
-});
+};
 
 const Uploader = () => {
   const navigate = useNavigate();
@@ -42,6 +42,7 @@ const Uploader = () => {
   const [videoTitle, setVideoTitle] = useState("");
   const [videoCategory, setVideoCategory] = useState("");
   const [videoFile, setVideoFile] = useState("");
+  const [videoFiles, setVideoFiles] = useState("");
   const [videoFileName, setVideoFileName] = useState("");
   const [videoUploading, setVideoUploading] = useState(false);
   const [description, setDescription] = useState("");
@@ -63,43 +64,103 @@ const Uploader = () => {
     setImageProgress(null);
   }
 
-  function handleFileChange(target, setter) {
-    setVideoFileName(target.files[0].name);
-    setter(target.files[0]);
-  }
+  // function handleFileChange(target, setter) {
+  //   setVideoFileName(target.files[0].name);
+  //   setter(target.files[0]);
+  // }
 
   function handleFileChangeImage(target, setter) {
     setImageFileName(target.files[0].name);
     setter(target.files[0]);
   }
 
+  async function getResp(url) {
+    const { id } = getVideoId(url);
+    const response = await fetch(
+      `https://yt-api.p.rapidapi.com/dl?id=${id}`,
+      options
+    );
+    return response;
+  }
+
   async function handleFileUpload() {
     document.getElementById("select").style.cursor = "not-allowed";
     document.getElementById("countries").style.pointerEvents = "none";
-    document.getElementById("title-container").style.cursor = "not-allowed";
-    document.getElementById("title").style.pointerEvents = "none";
-    document.getElementById("description-container").style.cursor =
-      "not-allowed";
-    document.getElementById("description").style.pointerEvents = "none";
-    document.getElementById("image-container").style.cursor = "not-allowed";
-    document.getElementById("image").style.pointerEvents = "none";
+    // document.getElementById("title-container").style.cursor = "not-allowed";
+    // document.getElementById("title").style.pointerEvents = "none";
+    // document.getElementById("description-container").style.cursor = "not-allowed";
+    // document.getElementById("description").style.pointerEvents = "none";
+    // document.getElementById("image-container").style.cursor = "not-allowed";
+    // document.getElementById("image").style.pointerEvents = "none";
     document.getElementById("video-container").style.cursor = "not-allowed";
     document.getElementById("video").style.pointerEvents = "none";
     document.querySelector("button").style.disabled = "true";
     setVideoUploading(true);
+
+    // Get URL from form input
+    const Url = `${videoFile}`;
+
+    // fetch data from url
+    const resp1 = await getResp(Url);
+    const Data = await resp1.json();
+
+    let title = Data.title;
+    let description = "";
+    if(Data.description.length >= 200){
+      description = Data.description.substring(0, 200) + "....";
+    }
+    else if(Data.description == ""){
+      description = title;
+    }
+    else{
+      description = Data.description;
+    }
+    let videoUrl = Data.formats[1].url;
+    let imgUrl = Data.thumbnail[1].url;
+
+    // console.log(Data);
+    // console.log(`data title ${title}`);
+    // let desc = Data.description;
+    // setDescription(`${title}`);
+    // console.log(`data title ${title}`);
+    console.log(title);
+    console.log(`this is dicription ${description}`);
+    // console.log(videoUrl);
+    // console.log(imgUrl);
+
+    // covert image url into blob
+    let imgRes = await fetch(`${imgUrl}`);
+    let imgData = await imgRes.blob();
+
+    // covert video url into blob
+    const response2 = await fetch(`${videoUrl}`);
+    const videoData = await response2.blob();
+    // console.log(`this is video file ${videoData}`);
+
     const reader = new window.FileReader();
-    reader.readAsArrayBuffer(videoFile);
+    reader.readAsArrayBuffer(videoData);
     reader.onloadend = async () => {
       // Web3Storage video upload start
+
+      let metadata1 = {
+        type: "video/mp4",
+      };
+      let vFile = [new File([videoData], "sample.mp4", metadata1)];
       try {
-        const fileInput = document.querySelector("#input_video");
-        const files = fileInput.files;
+        // const fileInput = document.querySelector("#input_video");
+
+        const files = vFile;
+        console.log(files);
+
         const onRootCidReady = (cid) => {
           console.log("uploading files with cid:", cid);
         };
+        console.log(`this is name of files ${files[0].name}`);
+        console.log(`this is size of files ${files[0].size}`);
         const totalSize = files[0].size;
-        let fileName = files[0].name.replace(/\s/g, "%20");
-        fileName = fileName.replace(/#/g, "%23");
+        // let fileName = files.name.replace[0](/\s/g, "%20");
+        // fileName = fileName.replace[0](/#/g, "%23");
+        let fileName = files[0].name;
         let uploaded = 0;
         const onStoredChunk = (size) => {
           uploaded += size;
@@ -113,6 +174,7 @@ const Uploader = () => {
           onStoredChunk,
         });
         const VideoUrl = `https://${IpfsCid}.ipfs.w3s.link/${fileName}`;
+        console.log(`this is video url web3 ${VideoUrl}`);
 
         imageUpload(VideoUrl);
       } catch (error) {
@@ -126,18 +188,27 @@ const Uploader = () => {
           var FormData = require("form-data");
           var data = new FormData();
           const reader = new window.FileReader();
-          reader.readAsArrayBuffer(imageFile);
+          reader.readAsArrayBuffer(imgData);
           reader.onloadend = async () => {
             // Web3Storage image upload start
+            let metadata2 = {
+              type: "image/jpeg",
+            };
+            let imgFile = [new File([imgData], "test.jpg", metadata2)];
+            console.log(imgFile);
             try {
-              const fileInput = document.querySelector("#input_thumbnail");
-              const files = fileInput.files;
+              // const fileInput = document.querySelector("#input_thumbnail");
+              // const files = fileInput.files;
+              const files = imgFile;
+              console.log(`this is img file ${files}`);
               const onRootCidReady = (cid) => {
                 console.log("uploading files with cid:", cid);
               };
               const totalSize = files[0].size;
-              let fileName = files[0].name.replace(/\s/g, "%20");
-              fileName = fileName.replace(/#/g, "%23");
+              let fileName = files[0].name;
+              console.log(`this is size of img ${files[0].size}`);
+              // let fileName = files[0].name.replace(/\s/g, "%20");
+              // fileName = fileName.replace(/#/g, "%23");
               let uploaded = 0;
               const onStoredChunk = (size) => {
                 uploaded += size;
@@ -151,18 +222,27 @@ const Uploader = () => {
                 onStoredChunk,
               });
               ImageUrl = `https://${IpfsCid}.ipfs.w3s.link/${fileName}`;
+              console.log(`img url of web3 ${ImageUrl}`);
             } catch (error) {
               console.log(error);
             }
             //   web3Storage image upload end
 
             data.append("category", videoCategory);
-            data.append("name", videoTitle);
+            data.append("name", title);
             data.append("video_desc", description);
             data.append("video_uid", VideoUrl);
             data.append("thumbnail_ipfs", ImageUrl);
             data.append("user_address", account);
             data.append("user_type", "admin");
+
+            console.log(`video videoCategory ${videoCategory}`);
+            console.log(`video title ${title}`);
+            console.log(`viseo description ${description}`);
+            console.log(`viseo VideoUrl ${VideoUrl}`);
+            console.log(`viseo ImageUrl ${ImageUrl}`);
+            console.log(`video account ${account}`);
+            console.log(`this is append data ${data}`);
 
             var config = {
               method: "post",
@@ -342,14 +422,25 @@ const Uploader = () => {
                     onChange={(e) => handleChange(e.target, setVideoCategory)}
                   >
                     <option defaultValue>Choose video category</option>
-                    <option value="927f0965-6eed-462c-bfa0-79867c9f9448">Explainers</option>
-                    <option value="fd3d24bd-8764-494e-9ade-40911b8e11a1">Tutorials</option>
-                    <option value="5dae4ba7-933a-40a9-8866-49ee971ccf87">Review</option>
-                    <option value="5822014a-02af-41c4-8564-0ec4ceba8db6">News</option>
-                    <option value="0f01d804-648d-42a7-ab11-bdc373f4b7bd">Others</option>
+                    <option value="927f0965-6eed-462c-bfa0-79867c9f9448">
+                      Explainers
+                    </option>
+                    <option value="fd3d24bd-8764-494e-9ade-40911b8e11a1">
+                      Tutorials
+                    </option>
+                    <option value="5dae4ba7-933a-40a9-8866-49ee971ccf87">
+                      Review
+                    </option>
+                    <option value="5822014a-02af-41c4-8564-0ec4ceba8db6">
+                      News
+                    </option>
+                    <option value="0f01d804-648d-42a7-ab11-bdc373f4b7bd">
+                      Others
+                    </option>
                   </select>
                 </div>
-                <div className="mb-5" id="title-container">
+
+                {/* <div className="mb-5" id="title-container">
                   <label
                     htmlFor="title"
                     className="mb-3 block font-medium text-base"
@@ -365,9 +456,9 @@ const Uploader = () => {
                     placeholder="Video Title"
                     className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
                   />
-                </div>
+                </div> */}
 
-                <div className="mb-5" id="description-container">
+                {/* <div className="mb-5" id="description-container">
                   <label
                     htmlFor="email"
                     className="mb-3 block text-base font-medium"
@@ -382,16 +473,16 @@ const Uploader = () => {
                     className="w-full rounded-md border border-[#e0e0e0] py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
                     placeholder="Video Description..."
                   ></textarea>
-                </div>
+                </div> */}
 
-                <div className="mb-5" id="image-container">
-                  {/* <span>
+                {/* <div className="mb-5" id="image-container"> */}
+                {/* <span>
                     {imageFileName == "" ? "No File Selected" : imageFileName}
                   </span> */}
-                  {!imageProgress ? (
+                {/* {!imageProgress ? (
                     <>
-                      <div id="image">
-                        {/* <label
+                      <div id="image"> */}
+                {/* <label
                         className="file-input__label mt-2"
                         htmlFor="input_thumbnail"
                       >
@@ -422,7 +513,7 @@ const Uploader = () => {
                         }
                         accept="image/*"
                       /> */}
-                        <div className="col-md-12">
+                {/* <div className="col-md-12">
                           <div className="form-group">
                             <label htmlFor="thumbnail">Thumbnail</label>
                             <div className="drop-zone">
@@ -460,45 +551,14 @@ const Uploader = () => {
                       />
                     </>
                   )}
-                </div>
+                </div> */}
 
-                <div className="mb-5" id="video-container">
-                  {/* <span>
-                    {videoFileName == "" ? "No File Selected" : videoFileName}
-                  </span> */}
+                {/* <div className="mb-5" id="video-container">
+                  
                   {!videoProgress ? (
                     <>
                       <div id="video">
-                        {/* <label
-                          className="file-input__label mt-2"
-                          htmlFor="input_video"
-                        >
-                          <svg
-                            aria-hidden="true"
-                            focusable="false"
-                            data-prefix="fas"
-                            data-icon="upload"
-                            className="svg-inline--fa fa-upload fa-w-16"
-                            role="img"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"
-                            ></path>
-                          </svg>
-                          <span>Upload Video</span>
-                        </label>
-                        <input
-                          className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md file-input__input"
-                          type="file"
-                          id="input_video"
-                          onChange={(e) =>
-                            handleFileChange(e.target, setVideoFile)
-                          }
-                          accept="video/*"
-                        /> */}
+                      
                         <div className="col-md-12">
                           <div className="form-group">
                             <label htmlFor="video">Video</label>
@@ -522,7 +582,7 @@ const Uploader = () => {
                             </div>
                             <span
                               className="my-1"
-                              style={{fontSize:"12px", color: currentColor}}
+                              style={{ fontSize: "12px", color: currentColor }}
                             >
                               <i
                                 className="fa fa-info-circle"
@@ -547,14 +607,61 @@ const Uploader = () => {
                       />
                     </>
                   )}
+                </div> */}
+
+                <div className="mb-5" id="video-container">
+                  {!videoProgress ? (
+                    <>
+                      <div id="video">
+                        <div className="col-md-12">
+                          <div className="mb-5" id="title-container">
+                            <label className="mb-3 block font-medium text-base">
+                              Video
+                            </label>
+                            <input
+                              type="text"
+                              name="video"
+                              value={videoFile}
+                              onChange={(e) =>
+                                handleChange(e.target, setVideoFile)
+                              }
+                              id="input_video"
+                              placeholder="Drop video here or click to upload"
+                              accept="video/*"
+                              className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
+                            />
+                          </div>
+                          <span
+                            className="my-1"
+                            style={{ fontSize: "12px", color: currentColor }}
+                          >
+                            <i
+                              className="fa fa-info-circle"
+                              aria-hidden="true"
+                            ></i>{" "}
+                            Video size should be less than 100 mb
+                          </span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="mt-2">
+                        Video uploading in progress... {videoProgress}%
+                      </p>
+                      <Line
+                        percent={videoProgress}
+                        strokeWidth={3}
+                        strokeColor={currentColor}
+                        className="mt-2"
+                      />
+                    </>
+                  )}
                 </div>
+
                 <div>
                   {!videoUploading ? (
-                    videoTitle &&
-                    videoCategory &&
-                    description &&
-                    videoFile &&
-                    imageFile ? (
+                    videoCategory && videoFile ? (
                       <button
                         type="button"
                         className="hover:shadow-form w-full rounded-md  py-3 px-8 text-center text-base font-semibold text-white outline-none"
