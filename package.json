@@ -15,6 +15,7 @@
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^19.4.50",
+    "antd": "^5.1.1",
     "axios": "^0.27.2",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
@@ -37,6 +38,7 @@
     "react-scripts": "5.0.0",
     "react-spinners": "^0.13.5",
     "react-toastify": "^9.0.8",
+    "react-transition-group": "^4.4.5",
     "sweetalert": "^2.1.2",
     "uuid": "^8.3.2",
     "web3.storage": "^4.4.0"
