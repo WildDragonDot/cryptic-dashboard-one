@@ -14,6 +14,6 @@ export { default as Pie } from './Charts/Pie';
 export { default as Area } from './Charts/Area';
 export { default as Pyramid } from './Charts/Pyramid';
 export { default as Stacked } from './Charts/Stacked';
-export { default as Uploader } from './Uploader';
+export { default as Uploader } from './uploader/Uploader';
 export { default as Donation } from './Donation';
 export { default as Signup } from './Signup';
