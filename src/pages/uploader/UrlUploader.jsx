@@ -94,13 +94,11 @@ const UrlUploader = () => {
 
     let title = Data.title;
     let description = "";
-    if(Data.description.length >= 100){
+    if (Data.description.length >= 100) {
       description = Data.description.substring(0, 100) + "....";
-    }
-    else if(Data.description == ""){
+    } else if (Data.description == "") {
       description = title;
-    }
-    else{
+    } else {
       description = Data.description;
     }
     let videoUrl = Data.formats[1].url;
@@ -193,7 +191,7 @@ const UrlUploader = () => {
               const totalSize = files[0].size;
               let fileName = files[0].name;
               console.log(`this is size of img ${files[0].size}`);
-             
+
               let uploaded = 0;
               const onStoredChunk = (size) => {
                 uploaded += size;
@@ -376,150 +374,143 @@ const UrlUploader = () => {
         draggable
         pauseOnHover
       />
-            <div className="mx-auto w-full max-w-[550px]">
-              <form
-                className="py-6 px-9"
-                action="https://formbold.com/s/FORM_ID"
-                method="POST"
-              >
-                <div className="mb-5" id="select">
-                  <label
-                    htmlFor="countries"
-                    className="mb-3 block text-base font-medium "
-                  >
-                    Select an option
-                  </label>
-                  <select
-                    id="countries"
-                    className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
-                    placeholder="Select category"
-                    onChange={(e) => handleChange(e.target, setVideoCategory)}
-                  >
-                    <option defaultValue>Choose video category</option>
-                    <option value="927f0965-6eed-462c-bfa0-79867c9f9448">
-                      Explainers
-                    </option>
-                    <option value="fd3d24bd-8764-494e-9ade-40911b8e11a1">
-                      Tutorials
-                    </option>
-                    <option value="5dae4ba7-933a-40a9-8866-49ee971ccf87">
-                      Review
-                    </option>
-                    <option value="5822014a-02af-41c4-8564-0ec4ceba8db6">
-                      News
-                    </option>
-                    <option value="0f01d804-648d-42a7-ab11-bdc373f4b7bd">
-                      Others
-                    </option>
-                  </select>
-                </div>
+      <div className="mx-auto w-full max-w-[550px]">
+        <form
+          className="py-6 px-9"
+          action="https://formbold.com/s/FORM_ID"
+          method="POST"
+        >
+          <div className="mb-5" id="select">
+            <label
+              htmlFor="countries"
+              className="mb-3 block text-base font-medium "
+            >
+              Select an option
+            </label>
+            <select
+              id="countries"
+              className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
+              placeholder="Select category"
+              onChange={(e) => handleChange(e.target, setVideoCategory)}
+            >
+              <option defaultValue>Choose video category</option>
+              <option value="927f0965-6eed-462c-bfa0-79867c9f9448">
+                Explainers
+              </option>
+              <option value="fd3d24bd-8764-494e-9ade-40911b8e11a1">
+                Tutorials
+              </option>
+              <option value="5dae4ba7-933a-40a9-8866-49ee971ccf87">
+                Review
+              </option>
+              <option value="5822014a-02af-41c4-8564-0ec4ceba8db6">News</option>
+              <option value="0f01d804-648d-42a7-ab11-bdc373f4b7bd">
+                Others
+              </option>
+            </select>
+          </div>
 
-                <div className="mb-5" id="video-container">
-                  {!videoProgress ? (
-                    <>
-                      <div id="video">
-                        <div className="col-md-12">
-                          <div className="mb-5" id="title-container">
-                            <label className="mb-3 block font-medium text-base">
-                              Video
-                            </label>
-                            <input
-                              type="text"
-                              name="video"
-                              value={videoFile}
-                              onChange={(e) =>
-                                handleChange(e.target, setVideoFile)
-                              }
-                              id="input_video"
-                              placeholder="Drop video here or click to upload"
-                              accept="video/*"
-                              className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
-                            />
-                          </div>
-                          <span
-                            className="my-1"
-                            style={{ fontSize: "12px", color: currentColor }}
-                          >
-                            <i
-                              className="fa fa-info-circle"
-                              aria-hidden="true"
-                            ></i>{" "}
-                            Video size should be less than 100 mb
-                          </span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <p className="mt-2">
-                        Video uploading in progress... {videoProgress}%
-                      </p>
-                      <Line
-                        percent={videoProgress}
-                        strokeWidth={3}
-                        strokeColor={currentColor}
-                        className="mt-2"
+          <div className="mb-5" id="video-container">
+            {!videoProgress ? (
+              <>
+                <div id="video">
+                  <div className="col-md-12">
+                    <div className="mb-5" id="title-container">
+                      <label className="mb-3 block font-medium text-base">
+                        Video
+                      </label>
+                      <input
+                        type="text"
+                        name="video"
+                        value={videoFile}
+                        onChange={(e) => handleChange(e.target, setVideoFile)}
+                        id="input_video"
+                        placeholder="Drop video here or click to upload"
+                        accept="video/*"
+                        className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
                       />
-                    </>
-                  )}
-                </div>
-
-                <div>
-                  {!videoUploading ? (
-                    videoCategory && videoFile ? (
-                      <button
-                        type="button"
-                        className="hover:shadow-form w-full rounded-md  py-3 px-8 text-center text-base font-semibold text-white outline-none"
-                        onClick={handleFileUpload}
-                        style={{ background: currentColor }}
-                      >
-                        Send File
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="hover:shadow-form w-full rounded-md  py-3 px-8 text-center text-base font-semibold text-white outline-none opacity-70 transition ease-in-out duration-150 cursor-not-allowed"
-                        onClick={handleFileUpload}
-                        style={{ background: currentColor }}
-                        disabled
-                      >
-                        Send File
-                      </button>
-                    )
-                  ) : (
-                    <button
-                      type="button"
-                      className="w-full inline-flex items-center py-3 px-8 border border-transparent text-base leading-6 font-medium rounded-md justify-center  text-white transition ease-in-out duration-150 cursor-not-allowed"
-                      disabled
-                      style={{ background: currentColor }}
+                    </div>
+                    <span
+                      className="my-1"
+                      style={{ fontSize: "12px", color: currentColor }}
                     >
-                      <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Processing
-                    </button>
-                  )}
+                      <i className="fa fa-info-circle" aria-hidden="true"></i>{" "}
+                      Video size should be less than 100 mb
+                    </span>
+                  </div>
                 </div>
-              </form>
-            </div>
-          </>
+              </>
+            ) : (
+              <>
+                <p className="mt-2">
+                  Video uploading in progress... {videoProgress}%
+                </p>
+                <Line
+                  percent={videoProgress}
+                  strokeWidth={3}
+                  strokeColor={currentColor}
+                  className="mt-2"
+                />
+              </>
+            )}
+          </div>
+
+          <div>
+            {!videoUploading ? (
+              videoCategory && videoFile ? (
+                <button
+                  type="button"
+                  className="hover:shadow-form w-full rounded-md  py-3 px-8 text-center text-base font-semibold text-white outline-none"
+                  onClick={handleFileUpload}
+                  style={{ background: currentColor }}
+                >
+                  Send File
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="hover:shadow-form w-full rounded-md  py-3 px-8 text-center text-base font-semibold text-white outline-none opacity-70 transition ease-in-out duration-150 cursor-not-allowed"
+                  onClick={handleFileUpload}
+                  style={{ background: currentColor }}
+                  disabled
+                >
+                  Send File
+                </button>
+              )
+            ) : (
+              <button
+                type="button"
+                className="w-full inline-flex items-center py-3 px-8 border border-transparent text-base leading-6 font-medium rounded-md justify-center  text-white transition ease-in-out duration-150 cursor-not-allowed"
+                disabled
+                style={{ background: currentColor }}
+              >
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Processing
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 
