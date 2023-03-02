@@ -15,7 +15,7 @@ const Uploader = () => {
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 rounded-3xl">
       <div className="container max-w-2xl mx-auto flex-1 flex flex-col items-center justify-center px-2">
         <div
-          className="bg-white dark:text-gray-200 text-gray-600 dark:bg-secondary-dark-bg px-6 py-8 rounded shadow-md w-full bg-grey-lighter1"
+          className="bg-white  text-gray-600  px-6 py-8 rounded shadow-md w-full bg-slate-100"
           style={{ borderRadius: "1.5rem" }}
         >
           <div className=" mb-2">

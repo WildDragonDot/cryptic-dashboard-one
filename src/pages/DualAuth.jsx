@@ -3,7 +3,7 @@ import "./signup.css";
 import axios from "axios";
 import { useStateContext } from "../contexts/ContextProvider";
 import { useNavigate } from "react-router-dom";
-import swal from "@sweetalert/with-react"; 
+import swal from "@sweetalert/with-react";
 
 const DualAuth = () => {
   const navigate = useNavigate();
@@ -27,18 +27,18 @@ const DualAuth = () => {
       };
       axios(config).then(function (response) {
         if (response.data["userExists"] === true) {
-          sessionStorage.setItem("finflixUser", account);
+          sessionStorage.setItem("CrypticUser", account);
           setAccountAddress(account);
           swal({
-              title: "Success!",
-              text: "You have successfully logged in!",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
+            title: "Success!",
+            text: "You have successfully logged in!",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
             navigate("/");
-            });
+          });
         } else {
-          swal({ 
+          swal({
             title: "Error!",
             text: "Incorrect username or password!",
             icon: "error",
@@ -49,7 +49,7 @@ const DualAuth = () => {
     }
   };
 
-  const accountAddress = sessionStorage.getItem("finflixUser");
+  const accountAddress = sessionStorage.getItem("CrypticUser");
   useEffect(() => {
     if (status === "notConnected") {
       setAccountAddress(null);
@@ -67,7 +67,7 @@ const DualAuth = () => {
 
   return (
     <div className="relative min-h-screen flex ">
-      <div className="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0 bg-white">
+      <div className="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0 bg-slate-900">
         <div
           className="sm:w-1/2 xl:w-3/5 h-full hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden bg-purple-900 text-white bg-no-repeat bg-cover relative"
           style={{
@@ -78,10 +78,10 @@ const DualAuth = () => {
           <div className="absolute bg-gradient-to-b from-indigo-600 to-blue-500 opacity-75 inset-0 z-0"></div>
           <div className="w-full  max-w-md z-10">
             <div className="sm:text-4xl xl:text-5xl font-bold leading-tight mb-6">
-              Finflix Dashboard
+              Crytpic Dashboard
             </div>
             <div className="sm:text-sm xl:text-md text-gray-200 font-normal">
-              Finflix is a decentrlize video ott plateform. where you can learn
+              Cryptic is a decentrlize video ott plateform. where you can learn
               about crypto.
             </div>
           </div>
@@ -98,13 +98,13 @@ const DualAuth = () => {
             <li></li>
           </ul>
         </div>
-        <div className="md:flex md:items-center md:justify-center w-full sm:w-auto md:h-full xl:w-2/5 p-8  md:p-10 lg:p-14 sm:rounded-lg md:rounded-none bg-white">
+        <div className="md:flex md:items-center md:justify-center w-full sm:w-auto md:h-full xl:w-2/5 p-8  md:p-10 lg:p-14 sm:rounded-lg md:rounded-none  bg-slate-900">
           <div className="max-w-md w-full space-y-8">
             <div className="text-center">
-              <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              <h2 className="mt-6 text-3xl font-bold text-white">
                 Password Authentication
               </h2>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-300">
                 Please login with your username and password
               </p>
             </div>
@@ -116,19 +116,17 @@ const DualAuth = () => {
                   <label htmlFor="username" className="sr-only">
                     Username
                   </label>
-
                   <input
                     id="username"
                     name="username"
                     type="text"
                     autoComplete="username"
-                    required
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    requireds
+                    className="appearance-none  rounded-none relative block w-full px-3 py-2 border-inherit text-white  bg-slate-700 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Username"
                     onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
-
                 <div className="my-4">
                   <label htmlFor="password" className="sr-only">
                     Password
@@ -139,7 +137,7 @@ const DualAuth = () => {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                    className="appearance-none rounded-none relative block w-full px-3 py-2 border-inherit text-white bg-slate-700   rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                     placeholder="Password"
                     onChange={(e) => setPassword(e.target.value)}
                   />

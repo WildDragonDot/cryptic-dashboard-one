@@ -25,7 +25,7 @@ const Donation = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  const accountAddress = sessionStorage.getItem('finflixUser');
+  const accountAddress = sessionStorage.getItem('CrypticUser');
   useEffect(() => {
     if (status === 'notConnected') {
       setAccountAddress(null);
