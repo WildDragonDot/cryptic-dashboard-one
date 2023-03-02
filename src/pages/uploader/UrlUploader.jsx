@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Buffer } from "buffer";
 import { create } from "ipfs-http-client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Line } from "rc-progress";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,10 +13,10 @@ import swal from "@sweetalert/with-react";
 import getVideoId from "get-video-id";
 
 // Construct with token and endpoint
+const API_KEY = "5a13d80f-b394-46d3-91b0-e8d52be4c240";
 function getAccessToken() {
   return process.env.REACT_APP_WEBTHREETOKEN;
 }
-
 function makeStorageClient() {
   return new Web3Storage({ token: getAccessToken() });
 }
@@ -49,6 +49,7 @@ const UrlUploader = () => {
   const [imageFileName, setImageFileName] = useState("");
   const [videoProgress, setVideoProgress] = useState(null);
   const [imageProgress, setImageProgress] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   function videoUploadSuccess() {
     setVideoTitle("");
@@ -85,32 +86,31 @@ const UrlUploader = () => {
     document.querySelector("button").style.disabled = "true";
     setVideoUploading(true);
 
-    // Get URL from form input
     const Url = `${videoFile}`;
 
     // fetch data from url
     const resp1 = await getResp(Url);
     const Data = await resp1.json();
+    console.log(Data);
 
     let title = Data.title;
-    let description = "";
+    let desc = "";
     if (Data.description.length >= 100) {
-      description = Data.description.substring(0, 100) + "....";
+      desc = Data.description.substring(0, 100) + "....";
     } else if (Data.description == "") {
-      description = title;
+      desc = title;
     } else {
-      description = Data.description;
+      desc = Data.description;
     }
-    let videoUrl = Data.formats[1].url;
-    let imgUrl = Data.thumbnail[1].url;
-
+    let videoUrl = Data.formats[0].url;
+    let imgUrl = Data.thumbnail[0].url;
     // console.log(Data);
     // console.log(`data title ${title}`);
     // let desc = Data.description;
     // setDescription(`${title}`);
     // console.log(`data title ${title}`);
     console.log(title);
-    console.log(`this is dicription ${description}`);
+    console.log(`this is dicription ${desc}`);
     // console.log(videoUrl);
     // console.log(imgUrl);
 
@@ -126,50 +126,42 @@ const UrlUploader = () => {
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(videoData);
     reader.onloadend = async () => {
-      // Web3Storage video upload start
 
-      let metadata1 = {
-        type: "video/mp4",
-      };
-      let vFile = [new File([videoData], "sample.mp4", metadata1)];
+
+      // Livepeer video upload start
       try {
-        // const fileInput = document.querySelector("#input_video");
 
-        const files = vFile;
-        console.log(files);
-
-        const onRootCidReady = (cid) => {
-          console.log("uploading files with cid:", cid);
+        const url = "https://livepeer.studio/api/asset/import";
+        
+        const options = {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: `${videoUrl}`,
+            name: `${title}`,
+          }),
         };
-        console.log(`this is name of files ${files[0].name}`);
-        console.log(`this is size of files ${files[0].size}`);
-        const totalSize = files[0].size;
-        // let fileName = files.name.replace[0](/\s/g, "%20");
-        // fileName = fileName.replace[0](/#/g, "%23");
-        let fileName = files[0].name;
-        let uploaded = 0;
-        const onStoredChunk = (size) => {
-          uploaded += size;
-          const pct = 100 * (uploaded / totalSize);
-          setVideoProgress(pct.toFixed(2));
-          console.log(`Uploading... ${pct.toFixed(2)}% complete`);
-        };
-        const client = makeStorageClient();
-        const IpfsCid = await client.put(files, {
-          onRootCidReady,
-          onStoredChunk,
-        });
-        const VideoUrl = `https://${IpfsCid}.ipfs.w3s.link/${fileName}`;
-        console.log(`this is video url web3 ${VideoUrl}`);
+        const response = await fetch(url, options);
+        const data = await response.json();
+        console.log(data);
+        const video_Playback_Id = await data.asset.playbackId;
+        const assetId = await data.asset.id;
+        console.log(video_Playback_Id);
+        console.log(`this is Progress of uploading video url ${progress}`);
 
-        imageUpload(VideoUrl);
-      } catch (error) {
-        console.log("Error uploading file: ", error);
-      }
-      // Web3Storage video upload end
-
-      async function imageUpload(VideoUrl) {
-        try {
+          
+          imageUpload(video_Playback_Id);
+        } catch (error) {
+          console.log("Error uploading file: ", error);
+        }
+        
+        async function imageUpload(video_Playback_Id) {
+          let videoId = video_Playback_Id;
+          setProgress(progress);
+          try {
           let ImageUrl = "";
           var FormData = require("form-data");
           var data = new FormData();
@@ -213,16 +205,16 @@ const UrlUploader = () => {
 
             data.append("category", videoCategory);
             data.append("name", title);
-            data.append("video_desc", description);
-            data.append("video_uid", VideoUrl);
+            data.append("video_desc", desc);
+            data.append("video_uid", videoId);
             data.append("thumbnail_ipfs", ImageUrl);
             data.append("user_address", account);
             data.append("user_type", "admin");
 
             console.log(`video videoCategory ${videoCategory}`);
             console.log(`video title ${title}`);
-            console.log(`viseo description ${description}`);
-            console.log(`viseo VideoUrl ${VideoUrl}`);
+            console.log(`viseo description ${desc}`);
+            console.log(`viseo VideoUrl ${videoId}`);
             console.log(`viseo ImageUrl ${ImageUrl}`);
             console.log(`video account ${account}`);
             console.log(`this is append data ${data}`);
@@ -232,18 +224,19 @@ const UrlUploader = () => {
               url: `${process.env.REACT_APP_LOCALHOST_URL}/php/API/upload_video`,
               data: data,
             };
+            console.log(`this is config post php url ${config}`);
             axios(config)
               .then(function (response) {
-                videoUploadSuccess();
-                setVideoUploading(false);
-                swal({
-                  title: "Video Uploaded Successfully",
-                  icon: "success",
-                  button: "Ok",
-                }).then(() => {
-                  navigate("/videos");
-                });
-              })
+                  videoUploadSuccess();
+                  setVideoUploading(false);
+                  swal({
+                    title: "Video Uploaded Successfully",
+                    icon: "success",
+                    button: "Ok",
+                  }).then(() => {
+                    navigate("/videos");
+                  });
+                })
               .catch(function (error) {
                 console.log(error);
               });
@@ -271,7 +264,7 @@ const UrlUploader = () => {
     });
   };
 
-  const accountAddress = sessionStorage.getItem("CrypticUser");
+  const accountAddress = sessionStorage.getItem("finflixUser");
   useEffect(() => {
     if (status === "notConnected") {
       setAccountAddress(null);
@@ -443,10 +436,11 @@ const UrlUploader = () => {
             ) : (
               <>
                 <p className="mt-2">
-                  Video uploading in progress... {videoProgress}%
+                  {progress > 0 && <p>Uploading: {progress}%</p>}
+                  Video uploading in progress... {progress}%
                 </p>
                 <Line
-                  percent={videoProgress}
+                  percent={progress}
                   strokeWidth={3}
                   strokeColor={currentColor}
                   className="mt-2"
