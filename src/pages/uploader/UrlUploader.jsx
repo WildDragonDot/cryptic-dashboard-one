@@ -11,8 +11,12 @@ import { useEffect } from "react";
 import { Web3Storage } from "web3.storage";
 import swal from "@sweetalert/with-react";
 import getVideoId from "get-video-id";
+import { useAssetMetrics, useCreateAsset } from "@livepeer/react";
 
 // Construct with token and endpoint
+function getApiKey() {
+  return process.env.LIVEPEER_API_KEY;
+}
 const API_KEY = "5a13d80f-b394-46d3-91b0-e8d52be4c240";
 function getAccessToken() {
   return process.env.REACT_APP_WEBTHREETOKEN;
@@ -78,6 +82,7 @@ const UrlUploader = () => {
     return response;
   }
 
+  
   async function handleFileUpload() {
     document.getElementById("select").style.cursor = "not-allowed";
     document.getElementById("countries").style.pointerEvents = "none";
@@ -127,7 +132,7 @@ const UrlUploader = () => {
     reader.readAsArrayBuffer(videoData);
     reader.onloadend = async () => {
 
-
+      
       // Livepeer video upload start
       try {
 
@@ -150,10 +155,8 @@ const UrlUploader = () => {
         const video_Playback_Id = await data.asset.playbackId;
         const assetId = await data.asset.id;
         console.log(video_Playback_Id);
-        console.log(`this is Progress of uploading video url ${progress}`);
-
           
-          imageUpload(video_Playback_Id);
+        imageUpload(video_Playback_Id);
         } catch (error) {
           console.log("Error uploading file: ", error);
         }
@@ -436,6 +439,13 @@ const UrlUploader = () => {
             ) : (
               <>
                 <p className="mt-2">
+                {/* {progress && !uploadComplete && (
+                  <div>
+                    <p>Uploading...</p>
+                    <progress value={progress.percentComplete} max="100" />
+                    <p>{`${progress.percentComplete}%`}</p>
+                  </div>
+                )} */}
                   {progress > 0 && <p>Uploading: {progress}%</p>}
                   Video uploading in progress... {progress}%
                 </p>

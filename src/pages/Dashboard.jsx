@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Lottie from "lottie-react";
-import Dboard from "./json/Dashboard.json";
 import CountUp from "react-countup";
 import { useNavigate } from "react-router-dom";
 import { Stacked, Pie, LineChart } from "../components";
@@ -33,7 +31,7 @@ const Dashboard = () => {
   const [todayVisitor, setTodayVisitor] = useState(0);
   const [weeklyVisitor, setWeeklyVisitor] = useState(0);
   const [unit, setUnit] = useState("ETH");
-  const accountAddress = sessionStorage.getItem("CrypticUser");
+  const accountAddress = sessionStorage.getItem("finflixUser");
   useEffect(() => {
     if (status === "notConnected") {
       setAccountAddress(null);
@@ -147,7 +145,7 @@ const Dashboard = () => {
     },
     {
       icon: <MdAttachMoney />,
-      amount: "coming soon",
+      amount: totalDonations,
       title: "Total Doner",
       iconColor: "rgb(228, 106, 118)",
       iconBg: "rgb(255, 244, 229)",
@@ -172,22 +170,22 @@ const Dashboard = () => {
       iconBg: "#FB9678",
       pcColor: "red-600",
     },
-    // {
-    //   icon: <MdAttachMoney />,
-    //   total: todayETHDonation,
-    //   title: "Total Donation(ETH)",
-    //   unit: "ETH",
-    //   iconBg: "rgb(254, 201, 15)",
-    //   pcColor: "red-600",
-    // },
-    // {
-    //   icon: <MdAttachMoney />,
-    //   total: todayETHDonation,
-    //   title: "Total Donation(MATIC)",
-    //   unit: "MATIC",
-    //   iconBg: "rgb(254, 201, 15)",
-    //   pcColor: "red-600",
-    // },
+    {
+      icon: <MdAttachMoney />,
+      total: todayETHDonation,
+      title: "Total Donation(ETH)",
+      unit: "ETH",
+      iconBg: "rgb(254, 201, 15)",
+      pcColor: "red-600",
+    },
+    {
+      icon: <MdAttachMoney />,
+      total: todayETHDonation,
+      title: "Total Donation(MATIC)",
+      unit: "MATIC",
+      iconBg: "rgb(254, 201, 15)",
+      pcColor: "red-600",
+    },
     {
       icon: <MdEmojiPeople />,
       total: todayVisitor,
@@ -206,22 +204,22 @@ const Dashboard = () => {
       iconBg: "#FB9678",
       pcColor: "red-600",
     },
-    // {
-    //   icon: <MdAttachMoney />,
-    //   total: weeklyETHDonation,
-    //   title: "Total Donation(ETH)",
-    //   unit: "ETH",
-    //   iconBg: "rgb(254, 201, 15)",
-    //   pcColor: "red-600",
-    // },
-    // {
-    //   icon: <MdAttachMoney />,
-    //   total: weeklyMATICDonation,
-    //   title: "Total Donation(MATIC)",
-    //   unit: "MATIC",
-    //   iconBg: "rgb(254, 201, 15)",
-    //   pcColor: "red-600",
-    // },
+    {
+      icon: <MdAttachMoney />,
+      total: weeklyETHDonation,
+      title: "Total Donation(ETH)",
+      unit: "ETH",
+      iconBg: "rgb(254, 201, 15)",
+      pcColor: "red-600",
+    },
+    {
+      icon: <MdAttachMoney />,
+      total: weeklyMATICDonation,
+      title: "Total Donation(MATIC)",
+      unit: "MATIC",
+      iconBg: "rgb(254, 201, 15)",
+      pcColor: "red-600",
+    },
     {
       icon: <MdEmojiPeople />,
       total: weeklyVisitor,
@@ -235,11 +233,8 @@ const Dashboard = () => {
   return (
     <div className="mt-20">
       {/* <Header title="Dashboard"/> */}
-      <div className="setStylecardContainer flex flex-col flex-wrap md:flex-row lg:flex-nowrap lg:flex-row ">
-        <div className="flex justify-center items-center object-center md:w-full m-4  lg:w-1/4">
-        <Lottie className=" h-full w-full" animationData={Dboard} loop={true} />
-        </div>
-        <div className="flex m-3 flex-wrap lg:w-3/4 justify-center gap-10 items-center">
+      <div className="setStylecardContainer flex flex-wrap lg:flex-nowrap justify-center ">
+        <div className="flex m-3 flex-wrap justify-center gap-10 items-center">
           {data.map((item) => (
             <div
               key={item.title}
@@ -263,7 +258,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center my-4">
+      <div className="flex flex-wrap justify-center">
         <div className="w-750 bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl p-5 m-3">
           <div className="flex justify-between">
             <p className="text-xl font-semibold">Today's Stats</p>
@@ -288,6 +283,7 @@ const Dashboard = () => {
                     <p className="mt-3 text-md font-semibold">{item.title}</p>
                   </div>
                 </div>
+
                 <p className={`mt-3 text-${item.pcColor}`}>
                   {item.total} {item.unit}
                 </p>
@@ -347,7 +343,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* <div className="flex gap-10 m-4 flex-wrap justify-center chart">
+        <div className="flex gap-10 m-4 flex-wrap justify-center chart">
           <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl w-96 md:w-760">
             <div className="flex justify-between items-center gap-2 mb-10">
               <p className="text-xl font-semibold">Donation Details</p>
@@ -388,7 +384,7 @@ const Dashboard = () => {
               <Stacked type={unit} />
             </div>
           </div>
-        </div> */}
+        </div>
 
         <div className="flex gap-10 m-4 flex-wrap justify-center chart">
           <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl w-96 md:w-760">

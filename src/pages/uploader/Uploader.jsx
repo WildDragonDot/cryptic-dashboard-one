@@ -10,7 +10,11 @@ import {
 } from '@livepeer/react';
 import * as React from 'react';
 
+function getApiKey() {
+  return process.env.LIVEPEER_API_KEY;
+}
 const API_KEY = "5a13d80f-b394-46d3-91b0-e8d52be4c240";
+
 const livepeerClient = createReactClient({
   provider: studioProvider({
     apiKey: API_KEY,

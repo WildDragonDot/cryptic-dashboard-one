@@ -29,7 +29,7 @@ const App = () => {
   }, 3000);
 
   useEffect(() => {
-    const accountAddress2 = sessionStorage.getItem('CrypticUser');
+    const accountAddress2 = sessionStorage.getItem('finflixUser');
     if (status === 'notConnected') {
       setIsUserLogin(false);
       setAccountAddress(null);

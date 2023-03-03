@@ -130,7 +130,7 @@ const VideoDetails = () => {
     }
   };
 
-  const accountAddress = sessionStorage.getItem("CrypticUser");
+  const accountAddress = sessionStorage.getItem("finflixUser");
   useEffect(() => {
     if (status === "notConnected") {
       setAccountAddress(null);

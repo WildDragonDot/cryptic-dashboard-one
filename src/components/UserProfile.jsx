@@ -12,9 +12,9 @@ const UserProfile = () => {
 
   const logButton = () => {
     setAccountAddress(null);
-    sessionStorage.removeItem('CrypticUser');
+    sessionStorage.removeItem('finflixUser');
  }
-  const accountAddress2 = sessionStorage.getItem('CrypticUser');
+  const accountAddress2 = sessionStorage.getItem('finflixUser');
   useEffect(() => {    
     if (status === 'notConnected') {
       setAccountAddress(null);
@@ -50,7 +50,7 @@ const UserProfile = () => {
         <div>
           <p className="font-semibold text-xl dark:text-gray-200"> Hello Admin </p>
           <p className="text-gray-500 text-sm dark:text-gray-400">  Administrator   </p>
-          <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> https://Cryptic.finstreet.in/ </p>
+          <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> https://finflix.finstreet.in/ </p>
         </div>
       </div>
       <div>
