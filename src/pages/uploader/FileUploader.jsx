@@ -55,6 +55,18 @@ const FileUploader = () => {
   const [videoId, setVideoId] = useState("");
 
   // video upload to livepeer
+  // configure({
+  //   api: {
+  //     baseUrl: 'https://livepeer.studio/api/asset/import',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Access-Control-Allow-Origin': '*',
+  //       'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
+  //       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+  //     },
+  //   },
+  // });
+
   const {
     mutate: createAsset,
     data: asset,
@@ -487,7 +499,7 @@ const FileUploader = () => {
                               placeholder="Drop video here or click to upload"
                               className="w-full rounded-md border border-[#e0e0e0]  py-3 px-6 text-base font-medium text-[#6B7280] outline-none bg-[#e7e7e7] focus:border-[#6A64F1] focus:shadow-md"
                               // className="drop-zone__input"
-                              id="input_video"
+                              // id="input_video"
                               required
                               accept="video/*"
                             />
@@ -522,10 +534,12 @@ const FileUploader = () => {
             ) : (
               <>
                 <p className="mt-2 text-white">
+                <p className="mt-2">
+                </p>
                   {progressFormatted && <p>{progressFormatted}</p>}
                 </p>
                 <Line
-                  percent={progressFormatted && <p>{progressFormatted}</p>}
+                  percent={progressFormatted}
                   strokeWidth={3}
                   strokeColor={currentColor}
                   className="mt-2"
